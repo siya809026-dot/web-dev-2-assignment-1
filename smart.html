@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Event Dashboard</title>
+
+<style>
+/* ===== CSS CODE ===== */
+
+body {
+  background: linear-gradient(135deg, #3ec7c7, #5f2c82);
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.title {
+  text-align: center;
+  color: white;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 350px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+h2 {
+  color: #333;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  background: linear-gradient(135deg, #3ec7c7, #2aa8ff);
+  border: none;
+  color: white;
+  font-size: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.btns {
+  display: flex;
+  gap: 10px;
+}
+
+.btns button {
+  width: 50%;
+  font-size: 12px;
+}
+
+.event {
+  background: #f2f2f2;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* DOM BOX */
+.dom-box {
+  margin-top: 30px;
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.dom-box button {
+  width: 120px;
+}
+</style>
+</head>
+
+<body>
+
+<h1 class="title">🎯 Smart Event Dashboard</h1>
+
+<div class="container">
+
+  <!-- ADD EVENT PANEL -->
+  <div class="card">
+    <h2>Add New Event</h2>
+
+    <label>Event Title:</label>
+    <input type="text" id="title">
+
+    <label>Event Date:</label>
+    <input type="date" id="date">
+
+    <label>Category:</label>
+    <select id="category">
+      <option>Conference</option>
+      <option>Meeting</option>
+      <option>Workshop</option>
+      <option>Birthday</option>
+    </select>
+
+    <label>Description:</label>
+    <textarea id="desc"></textarea>
+
+    <button onclick="addEvent()">Add Event</button>
+  </div>
+
+
+  <!-- MY EVENTS PANEL -->
+  <div class="card">
+    <h2>My Events</h2>
+
+    <div class="btns">
+      <button onclick="clearEvents()">Clear All Events</button>
+      <button onclick="addSample()">Add Sample Events</button>
+    </div>
+
+    <div id="eventList">No events yet. Add your first event!</div>
+  </div>
+
+</div>
+
+
+<!-- DOM MANIPULATION DEMO -->
+<div class="dom-box">
+  <h2>DOM Manipulation Demo</h2>
+  <input type="text" id="domInput" placeholder="Type something...">
+  <button id="domBtn">Click Me</button>
+  <p id="domResult">You Pressed: </p>
+</div>
+
+
+<script>
+// ===== JAVASCRIPT CODE =====
+
+// EVENT MANAGER
+let events = JSON.parse(localStorage.getItem("events")) || [];
+
+function saveEvents() {
+  localStorage.setItem("events", JSON.stringify(events));
+}
+
+function displayEvents() {
+  let list = document.getElementById("eventList");
+
+  if (events.length === 0) {
+    list.innerHTML = "No events yet. Add your first event!";
+    return;
+  }
+
+  list.innerHTML = "";
+  events.forEach((e, index) => {
+    list.innerHTML += `
+      <div class="event">
+        <b>${e.title}</b><br>
+        📅 ${e.date} | ${e.category}<br>
+        ${e.desc}
+        <br>
+        <button onclick="deleteEvent(${index})">Delete</button>
+      </div>
+    `;
+  });
+}
+
+function addEvent() {
+  let title = document.getElementById("title").value;
+  let date = document.getElementById("date").value;
+  let category = document.getElementById("category").value;
+  let desc = document.getElementById("desc").value;
+
+  if (title === "" || date === "") {
+    alert("Please enter title and date");
+    return;
+  }
+
+  events.push({ title, date, category, desc });
+  saveEvents();
+  displayEvents();
+}
+
+function deleteEvent(i) {
+  events.splice(i, 1);
+  saveEvents();
+  displayEvents();
+}
+
+function clearEvents() {
+  events = [];
+  saveEvents();
+  displayEvents();
+}
+
+function addSample() {
+  events.push(
+    { title: "Tech Conference", date: "2026-03-10", category: "Conference", desc: "AI Event" },
+    { title: "College Meeting", date: "2026-03-15", category: "Meeting", desc: "Class Discussion" }
+  );
+  saveEvents();
+  displayEvents();
+}
+
+displayEvents();
+
+
+// DOM MANIPULATION DEMO
+let btn = document.getElementById("domBtn");
+let input = document.getElementById("domInput");
+let result = document.getElementById("domResult");
+
+btn.addEventListener("click", function() {
+  let value = input.value;
+  result.innerHTML = "You Pressed: " + value;
+});
+</script>
+
+</body>
+</html>
